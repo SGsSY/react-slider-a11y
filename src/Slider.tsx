@@ -2,8 +2,13 @@ import { useState } from "react";
 import "./Slider.css";
 import { ArrowBigLeft, ArrowBigRight, Circle, CircleDot } from "lucide-react";
 
+export type Image = {
+    url: string;
+    alt: string;
+};
+
 interface SliderProps {
-    images: string[];
+    images: Image[];
 }
 
 export function Slider(props: SliderProps) {
@@ -29,29 +34,39 @@ export function Slider(props: SliderProps) {
     };
 
     return (
-        <div className="slider_container">
-            {images.map((url, index) => (
+        <section className="slider_container" aria-label="Image Slider">
+            <a href="#slider-end" className="skip_link">
+                Skip Image Slider
+            </a>
+            {images.map(({ url, alt }, index) => (
                 <img
                     className="image"
                     style={{ transform: `translateX(-${100 * currentImageIndex}%)` }}
                     key={url}
                     src={url}
-                    alt={`car${index}`}
+                    alt={alt}
+                    aria-hidden={index !== currentImageIndex}
                 />
             ))}
-            <button className="slider_button left" onClick={showPrevImage}>
-                <ArrowBigLeft />
+            <button className="slider_button left" onClick={showPrevImage} aria-label="View Previous Image">
+                <ArrowBigLeft aria-hidden />
             </button>
-            <button className="slider_button right" onClick={showNextImage}>
-                <ArrowBigRight />
+            <button className="slider_button right" onClick={showNextImage} aria-label="View Next Image">
+                <ArrowBigRight aria-hidden />
             </button>
             <div className="slider_selection_block">
                 {images.map((_, index) => (
-                    <button key={index} className="slider_dot_button" onClick={() => setCurrentImageIndex(index)}>
-                        {index === currentImageIndex ? <CircleDot /> : <Circle />}
+                    <button
+                        key={index}
+                        className="slider_dot_button"
+                        onClick={() => setCurrentImageIndex(index)}
+                        aria-label={`View Image ${index + 1}`}
+                    >
+                        {index === currentImageIndex ? <CircleDot aria-hidden /> : <Circle aria-hidden />}
                     </button>
                 ))}
             </div>
-        </div>
+            <div id="slider-end" style={{ position: "absolute" }} />
+        </section>
     );
 }
